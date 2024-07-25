@@ -1,0 +1,154 @@
+Q1)
+begin;
+insert into student values
+   -> (20,"mayar","mohamed","mayar@gmail.com","assuit","female","2001-08-10");
+insert into stud_study_subj values 
+   -> (20,"os"),(20,"mysql");
+insert into stud_take_exam values 
+   -> (20,"os","2024-06-12",50),(20,"mysql","2024-07-12",65);
+commit;
+
+=============
+Q2)
+select concat_ws(" ", day(exam_date),monthname(exam_date),year(exam_date)) as date from stud_take_exam;
+
+=============
+Q3)
+select fisrt_name, timestampdiff(year,birth_date,curdate()) as age from student;
+
+=============
+Q4)
+select first_name, round(exam_score) as "rounded score" from student join stud_take_exam  on id=stud_id;
+
+===============
+Q5)
+select first_name, year(birth_date) as "year of birthdata" from student;
+
+=============
+Q6)
+insert into stud_take_exam values(9,"mysql",now(),70);
+
+============
+Q7)
+/* function */
+delimiter //
+create function helloworled(name varchar(20))
+returns varchar(20)
+DETERMINISTIC
+begin
+   return concat("hello ",name);
+end //
+delimiter ;
+
+/* using function */
+select helloworled("mona");
+
+=============
+Q8)
+/* function */
+delimiter //
+create function multiplyTwoNums(num1 int, num2 int)
+returns int
+DETERMINISTIC
+begin
+   return num1 * num2;
+end //
+delimiter ;
+
+/* using function */
+select multiplyTwoNums(2,3);
+
+============
+Q9)
+/* function */
+delimiter //
+create function giveScore(sid int, subjName varchar(20))
+returns float
+DETERMINISTIC
+begin
+   declare score float;
+   select exam_score into score from stud_take_exam where stud_id = sid and subj_name = subjName;
+   return score;
+end //
+delimiter ;
+
+/* using function */
+select giveScore(2,"mysql");
+
+==============
+Q10)
+/* function */
+delimiter //
+create function faildStudents(subjName varchar(20))
+returns int
+DETERMINISTIC
+begin
+   declare numStud int;
+   select count(*) into numStud from stud_take_exam where subj_name = subjName and exam_score < 80; 
+   return numStud;
+end //
+delimiter ;
+
+/* using function */
+select faildStudents("os");
+
+===============
+Q11)
+/* function */
+delimiter //
+create function avg_max_score(subjName varchar(20))
+returns float
+DETERMINISTIC
+begin
+   declare avg_value float;
+   select avg(subj_max_score) into avg_value from track_contain_subj where subj_name=subjName;
+   return avg_value;
+end //
+delimiter ;
+
+/* using function */
+select avg_max_score("os");
+
+=============
+Q12)
+create table  Deleted_Students like student;
+
+==============
+Q13)
+DELIMITER /
+create trigger deleted_student_trg
+after delete
+on student
+for each row
+begin
+   insert into deleted_student values(old.id, old.first_name, old.last_name, old.email, old.address, old.gender, old.birth_date);
+end /
+DELIMITER ;
+
+=============
+Q14)
+DELIMITER /
+create trigger backup_student_trg
+after insert
+on student
+for each row
+begin
+   insert into backup_student values(new.id, new.first_name, new.last_name, new.email, new.address, new.gender, new.birth_date);
+end /
+DELIMITER ;
+
+=============
+Q15)
+
+
+=============
+Q16)
+mysqldump --databases iti > /home/mona/mysql/Day3/iti_database.sql
+
+=============
+Q17)
+mysqldump --tables Students iti > /home/mona/mysql/Day3/students.sql
+
+=============
+Q18)
+source /home/mona/mysql/Day3/iti_database.sql
